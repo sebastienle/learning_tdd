@@ -21,5 +21,5 @@ from lists.views import home_page
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', home_page, name='home')
+    url(r'^$', home_page, name='home'),
 ]
