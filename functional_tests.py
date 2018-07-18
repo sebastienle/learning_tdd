@@ -33,6 +33,10 @@ class NewVisitorTest(unittest.TestCase):
         # "1: Buy peacock feathers" as an item in a to-do list
         inputbox.send_keys(Keys.ENTER)
 
+        # Ten second pause
+        #import time
+        #time.sleep(10)
+
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
 
