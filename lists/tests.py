@@ -28,3 +28,15 @@ class HomePageTest(TestCase):
 
         expected_content = render_to_string('home.html', request=request)
         self.assertEqual(remove_csrf(response.content.decode()), remove_csrf(expected_content))
+
+    def test_home_page_can_remember_post_requests(self):
+        request = HttpRequest()
+        request.method = "POST"
+        request.POST['item_text'] = "A new item"
+
+        response = home_page(request)
+
+        self.assertIn("A new item", response.content.decode())
+
+        expected_content = render_to_string('home.html', {'new_item_text': 'A new item'})
+        self.assertEqual(remove_csrf(response.content.decode()), remove_csrf(expected_content))
