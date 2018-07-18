@@ -1,12 +1,14 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
-
+import time
 
 class NewVisitorTest(unittest.TestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
+        # If Selenium is too fast, use this
+        self.browser.implicitly_wait(3)     # this will wait a maximum of 3 seconds
 
     def tearDown(self):
         self.browser.quit()
@@ -35,8 +37,7 @@ class NewVisitorTest(unittest.TestCase):
 
         # Ten second pause
         #import time
-        #time.sleep(10)
-
+        time.sleep(3)
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
 
@@ -50,6 +51,7 @@ class NewVisitorTest(unittest.TestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Use peacock feathers to make a fly')
         inputbox.send_keys(Keys.ENTER)
+        time.sleep(3)
 
         # The page updates again, and now shows both items on her list
         table = self.browser.find_element_by_id('id_list_table')
