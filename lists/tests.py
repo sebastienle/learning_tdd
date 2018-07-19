@@ -5,6 +5,7 @@ from django.template.loader import render_to_string
 import re
 
 from lists.views import home_page
+from lists.models import Item
 
 # Create your tests here.
 
@@ -29,14 +30,49 @@ class HomePageTest(TestCase):
         expected_content = render_to_string('home.html', request=request)
         self.assertEqual(remove_csrf(response.content.decode()), remove_csrf(expected_content))
 
-    def test_home_page_can_remember_post_requests(self):
+
+    def test_home_page_shows_items_in_database(self):
+        Item.objects.create(text='item 1')
+        Item.objects.create(text='item 2')
+
+        request = HttpRequest()
+
+        response = home_page(request)
+
+        self.assertIn('item 1', response.content.decode())
+        self.assertIn('item 2', response.content.decode())
+
+
+    def test_home_page_can_save_post_requests_to_database(self):
         request = HttpRequest()
         request.method = "POST"
         request.POST['item_text'] = "A new item"
 
         response = home_page(request)
 
-        self.assertIn("A new item", response.content.decode())
+        item_from_db = Item.objects.all()[0]
+        self.assertEqual(item_from_db.text, 'A new item')
 
-        expected_content = render_to_string('home.html', {'new_item_text': 'A new item'})
-        self.assertEqual(remove_csrf(response.content.decode()), remove_csrf(expected_content))
+        self.assertEqual(response.status_code, 302)     # Checks for a redirect
+        self.assertEqual(response['Location'], '/')     # The redirect sends to the home page
+
+
+from lists.models import Item
+
+class ItemModelTest(TestCase):
+
+    def test_saving_and_retrieving_items_to_the_database(self):
+        first_item = Item()
+        first_item.text = 'Item the first'
+        first_item.save()
+
+        second_item = Item()
+        second_item.text = 'Item the second'
+        second_item.save()
+
+        first_item_from_db = Item.objects.all()[0]
+        self.assertEqual(first_item_from_db.text, 'Item the first')
+
+        first_item_from_db = Item.objects.all()[1]
+        self.assertEqual(first_item_from_db.text, 'Item the second')
+
