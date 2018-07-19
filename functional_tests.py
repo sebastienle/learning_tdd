@@ -3,6 +3,14 @@ from selenium.webdriver.common.keys import Keys
 import unittest
 import time
 
+# This became needed when I started testing models (data)
+import os, sys
+sys.path.append(os.getcwd())
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tdd_01.settings")  # or whatever
+import django
+django.setup()
+
+
 class NewVisitorTest(unittest.TestCase):
 
     def setUp(self):
@@ -12,6 +20,14 @@ class NewVisitorTest(unittest.TestCase):
 
     def tearDown(self):
         self.browser.quit()
+
+    def check_for_row_in_list_table(self, expected_row):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(
+            expected_row,
+            [row.text for row in rows]
+        )
 
     def test_starting_a_new_todo_list(self):
         # Edith has heard about a cool new to do list app
@@ -38,13 +54,7 @@ class NewVisitorTest(unittest.TestCase):
         # Ten second pause
         #import time
         time.sleep(3)
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-
-        self.assertIn(
-            "1: Buy peacock feathers",
-            [row.text for row in rows]
-        )
+        self.check_for_row_in_list_table("1: Buy peacock feathers")
 
         # There is still a text box inviting her to add another item. She
         # enters "Use peacock feathers to make a fly" (Edith is very methodical)
@@ -54,17 +64,8 @@ class NewVisitorTest(unittest.TestCase):
         time.sleep(3)
 
         # The page updates again, and now shows both items on her list
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-
-        self.assertIn(
-            "1: Buy peacock feathers",
-            [row.text for row in rows]
-        )
-        self.assertIn(
-            "2: Use peacock feathers to make a fly",
-            [row.text for row in rows]
-        )
+        self.check_for_row_in_list_table("1: Buy peacock feathers")
+        self.check_for_row_in_list_table("2: Use peacock feathers to make a fly")
 
         # Edith wonders whether the site will remember her list. Then she sees
         # that the site has generated a unique URL for her -- there is some
@@ -75,6 +76,8 @@ class NewVisitorTest(unittest.TestCase):
 
 
         # Satisfied, she goes back to sleep
+
+
 
 
 if __name__ == '__main__':
