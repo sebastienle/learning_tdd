@@ -2,16 +2,17 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
 import time
+from django.test import LiveServerTestCase
 
 # This became needed when I started testing models (data)
-import os, sys
-sys.path.append(os.getcwd())
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tdd_01.settings")  # or whatever
-import django
-django.setup()
+# import os, sys
+# sys.path.append(os.getcwd())
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tdd_01.settings")  # or whatever
+# import django
+# django.setup()
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -32,7 +33,8 @@ class NewVisitorTest(unittest.TestCase):
     def test_starting_a_new_todo_list(self):
         # Edith has heard about a cool new to do list app
         # She goes to its homepage
-        self.browser.get('http://localhost:8000')
+        # self.browser.get('http://localhost:8000')     # LiveServerTestCase generates its own random port
+        self.browser.get(self.live_server_url)
 
         # She notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
@@ -76,7 +78,6 @@ class NewVisitorTest(unittest.TestCase):
 
 
         # Satisfied, she goes back to sleep
-
 
 
 
