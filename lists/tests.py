@@ -31,18 +31,6 @@ class HomePageTest(TestCase):
         self.assertEqual(remove_csrf(response.content.decode()), remove_csrf(expected_content))
 
 
-    def test_home_page_shows_items_in_database(self):
-        Item.objects.create(text='item 1')
-        Item.objects.create(text='item 2')
-
-        request = HttpRequest()
-
-        response = home_page(request)
-
-        self.assertIn('item 1', response.content.decode())
-        self.assertIn('item 2', response.content.decode())
-
-
     def test_home_page_can_save_post_requests_to_database(self):
         request = HttpRequest()
         request.method = "POST"
@@ -54,7 +42,19 @@ class HomePageTest(TestCase):
         self.assertEqual(item_from_db.text, 'A new item')
 
         self.assertEqual(response.status_code, 302)     # Checks for a redirect
-        self.assertEqual(response['Location'], '/')     # The redirect sends to the home page
+        self.assertEqual(response['Location'], '/lists/the-only-list-in-the-world')     # The redirect sends to the home page
+
+
+class ListViewTest(TestCase):
+
+    def test_lists_page_shows_items_in_database(self):
+        Item.objects.create(text='item 1')
+        Item.objects.create(text='item 2')
+
+        response = self.client.get('/lists/the-only-list-in-the-world')
+
+        self.assertIn('item 1', response.content.decode())
+        self.assertContains(response, 'item 2')
 
 
 from lists.models import Item

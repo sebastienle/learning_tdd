@@ -17,9 +17,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
-from lists.views import home_page
+from lists.views import home_page, list_view
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^lists/the-only-list-in-the-world/$', list_view, name='list_view'),
     url(r'^$', home_page, name='home'),
 ]
