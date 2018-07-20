@@ -11,7 +11,7 @@ def home_page(request):
 
 def list_view(request):
     items = Item.objects.all()
-    return render(request, 'home.html', {'items': items})
+    return render(request, 'list.html', {'items': items})
 
 
 def new_list(request):

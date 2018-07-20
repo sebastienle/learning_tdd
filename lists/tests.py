@@ -39,7 +39,7 @@ class NewListViewTest(TestCase):
         item_from_db = Item.objects.all()[0]
         self.assertEqual(item_from_db.text, 'A new item')
 
-    def test_can_save_post_requests_to_database(self):
+    def test_redirects_to_list_url(self):
         response = self.client.post('/lists/new', {'item_text': 'A new item'})
         self.assertEqual(response.status_code, 302)     # Checks for a redirect
         self.assertRedirects(response, '/lists/the-only-list-in-the-world/')
@@ -55,6 +55,10 @@ class ListViewTest(TestCase):
 
         self.assertIn('item 1', response.content.decode())
         self.assertContains(response, 'item 2')
+
+    def test_uses_lists_template(self):
+        response = self.client.get('/lists/the-only-list-in-the-world/')
+        self.assertTemplateUsed(response, 'list.html')
 
 
 from lists.models import Item
