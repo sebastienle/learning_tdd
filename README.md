@@ -1,3 +1,3 @@
-Note: Created this repo when learning about test driven development from the book "Test-Driven Development with Python, 2nd Edition". 
+Lessons used while learning java
 
-# learning_tdd
+tdd_with_python_jwp: From safaribooksonline.com, videos and books "Test-Driven Development with Python, 2nd Edition by Harry J.W. Percival". 
